@@ -32,16 +32,35 @@ function render({dispatch, state})  {
 }
 
 
-var tree = render(getContext()); // We need an initial tree
-var rootNode = createElement(tree);     // Create an initial root DOM node ...
-document.body.appendChild(rootNode);    // ... and it should be in the document
+let tree = render(getContext()); // We need an initial tree
+let rootNode = createElement(tree);     // Create an initial root DOM node ...
+
+let childNode = document.body.appendChild(rootNode);    // ... and it should be in the document
 delegator(document.body); // bind event handler.
 
+// - with diff then patch(efficient way / with vdom)
 const update = () => {
     var newTree = render(getContext());
     var patches = diff(tree, newTree);
     rootNode = patch(rootNode, patches);
     tree = newTree;
+};
+
+// // - without vdom(not efficient way)
+// const update = () => {
+//     // remove old node
+//     childNode.parentNode.removeChild(childNode);
+//
+//     // calculate new node
+//     let newTree = render(getContext());
+//     rootNode = createElement(newTree);
+//
+//     // apply new node.
+//     childNode = document.body.appendChild(rootNode);
+// };
+
+export const _unload = () => {
+    childNode.parentNode.removeChild(childNode);
 };
 
 const unSubscribe = store.subscribe(update);

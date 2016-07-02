@@ -4,7 +4,7 @@ import store, { getContext } from 'webapp/store.js'
 import { createSelector } from 'reselect';
 import { getCount } from 'webapp/reducers/counter.js';
 
-// with memorize(by reselect)
+// - with memorize(efficient way / with reselect)
 const render = createSelector(
     getCount,
     (count) => {
@@ -19,7 +19,7 @@ const render = createSelector(
     }
 );
 
-// without memorize(pure function)
+// // - without memorize(not efficient way)
 // const render = (state) => {
 //     const count = getCount(state);
 //     console.log('counter rendered! counter = ', count);
