@@ -18,4 +18,5 @@ jspm i
 # How to start
 ```
 npm run serve
+open http://localhost:3000
 ```
