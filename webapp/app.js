@@ -4,36 +4,40 @@ import patch from 'virtual-dom/patch';
 import createElement from 'virtual-dom/create-element';
 import delegator from 'dom-delegator';
 
+import Counter from './components/counter.js';
+import store from 'webapp/store.js'
+import {
+    increment,
+    decrement
+} from 'webapp/actions/counter.js';
+
 // 1: Create a function that declares what the DOM should look like
-function render(count)  {
+function render(dispatch, state)  {
+    const count = state.counter.count;
     return h(`div.test${count}`, {
         'ev-click': function (ev) {
-            console.log(ev);
+            dispatch(increment());
         },
         style: {
             textAlign: 'center',
-            lineHeight: (100 + count) + 'px',
+            lineHeight: 100 + 'px',
             border: '1px solid red',
-            width: (100 + count) + 'px',
-            height: (100 + count) + 'px'
+            width: 100 + 'px',
+            height: 100 + 'px'
         }
-    }, [String(count)]);
+    }, [Counter(state)]);
 }
 
-// 2: Initialise the document
-var count = 0;      // We need some app data. Here we just store a count.
-
-var tree = render(count);               // We need an initial tree
+var tree = render(store.dispatch, store.getState()); // We need an initial tree
 var rootNode = createElement(tree);     // Create an initial root DOM node ...
 document.body.appendChild(rootNode);    // ... and it should be in the document
 delegator(document.body); // bind event handler.
 
-// 3: Wire up the update logic
-setInterval(function () {
-    count++;
-
-    var newTree = render(count);
+const update = () => {
+    var newTree = render(store.dispatch, store.getState());
     var patches = diff(tree, newTree);
     rootNode = patch(rootNode, patches);
     tree = newTree;
-}, 1000);
+};
+
+const unSubscribe = store.subscribe(update);
